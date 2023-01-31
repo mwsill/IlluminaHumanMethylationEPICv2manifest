@@ -11,6 +11,7 @@
  Mset <- preprocessIllumina(RGset)
  Mset
  getBeta(Mset)
+ 
 ```
 
 

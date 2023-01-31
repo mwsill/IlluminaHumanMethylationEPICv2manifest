@@ -39,6 +39,7 @@ TypeI$nCpG <- as.integer(
 TypeI$nCpG[TypeI$nCpG < 0] <- 0L
 TypeSnpI <- TypeI[grep("^rs", TypeI$Name), ]
 TypeI <- TypeI[-grep("^rs", TypeI$Name), ]
+TypeI <- TypeI[-grep("^nv", TypeI$Name), ]
 
 TypeII <- manifest[
   manifest$Infinium_Design_Type == "II",
@@ -50,6 +51,7 @@ TypeII$nCpG <- as.integer(letterFrequency(TypeII$ProbeSeqA, letters = "R"))
 TypeII$nCpG[TypeII$nCpG < 0] <- 0L
 TypeSnpII <- TypeII[grep("^rs", TypeII$Name), ]
 TypeII <- TypeII[-grep("^rs", TypeII$Name), ]
+TypeII <- TypeII[-grep("^nv", TypeII$Name), ]
 
 controls <- read.table(
   file = file,
