@@ -10,8 +10,9 @@
  RGset
  Mset <- preprocessIllumina(RGset)
  Mset
+ # I have removed the 6397 duplicated probes
+ any(duplicated(rownames(Mset)))
  getBeta(Mset)
- 
 ```
 
 
