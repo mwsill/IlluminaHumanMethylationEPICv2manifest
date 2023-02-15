@@ -2,6 +2,24 @@ library(vroom)
 library(minfi)
 library(illuminaio)
 library(devtools)
+#library(minfiData)
+#library(minfiDataEPIC)
+
+#data(MsetEx)
+#data(MsetEPIC)
+
+#m450k <- getManifest(MsetEx)
+#me <- getManifest(MsetEPIC)
+#"cg12981137"
+#"cg12434587"
+
+#type1 <- getProbeInfo(m450k,c("I"))
+#type1[which(type1$Name=="cg12981137"),]
+#type1[which(type1$Name=="cg12434587"),]
+
+#type1 <- getProbeInfo(me,c("I"))
+#type1[which(type1$Name=="cg12981137"),]
+#type1[which(type1$Name=="cg12434587"),]
 
 rm(list=ls())
 gc()
@@ -17,6 +35,15 @@ rm(e1)
 gc()
 
 manifest <- vroom(file,skip=assay.line,n_max =control.line-assay.line-2) 
+
+#manifest[which(manifest$Name=="cg12981137"),"AlleleA_ProbeSeq"]
+#manifest[which(manifest$Name=="cg12981137"),"Infinium_Design"]
+#manifest[which(manifest$Name=="cg12981137"),"IlmnID"]
+
+#manifest[which(manifest$Name=="cg12434587"),"AlleleA_ProbeSeq"]
+#manifest[which(manifest$Name=="cg12434587"),"IlmnID"]
+
+manifest <- manifest[-which(manifest$IlmnID %in% c("cg12434587_BO11","cg12981137_BO11","cg12981137_TC21","cg12981137_BC21")),]
 
 manifest <- manifest[-which(duplicated(manifest$Name)),]
 
