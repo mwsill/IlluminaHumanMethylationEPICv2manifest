@@ -18,6 +18,8 @@ gc()
 
 manifest <- vroom(file,skip=assay.line,n_max =control.line-assay.line-2) 
 
+manifest <- manifest[-which(duplicated(manifest$Name)),]
+
 manifest$AddressA_ID <- gsub("^0*", "", manifest$AddressA_ID)
 manifest$AddressB_ID <- gsub("^0*", "", manifest$AddressB_ID)
 
@@ -103,4 +105,4 @@ IlluminaHumanMethylationEPICv2manifest <- IlluminaMethylationManifest(TypeI = ma
                                                               TypeSnpII = maniList$TypeSnpII,
                                                               annotation = "IlluminaHumanMethylationEPICv2")
 
-use_data(IlluminaHumanMethylationEPICv2manifest, internal=TRUE)
+use_data(IlluminaHumanMethylationEPICv2manifest, internal=TRUE, overwrite = T)
