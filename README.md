@@ -10,7 +10,7 @@
  RGset
  Mset <- preprocessIllumina(RGset)
  Mset
- # I have removed the 6397 duplicated probes
+ # I have removed the 6397 duplicated probes, trying to select those under manifest_probe_match==TRUE when possible
  any(duplicated(rownames(Mset)))
  getBeta(Mset)
 ```
