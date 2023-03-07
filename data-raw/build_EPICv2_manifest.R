@@ -2,27 +2,7 @@ library(vroom)
 library(minfi)
 library(illuminaio)
 library(devtools)
-#library(minfiData)
-#library(minfiDataEPIC)
-
-#data(MsetEx)
-#data(MsetEPIC)
-
-#m450k <- getManifest(MsetEx)
-#me <- getManifest(MsetEPIC)
-#"cg12981137"
-#"cg12434587"
-
-#type1 <- getProbeInfo(m450k,c("I"))
-#type1[which(type1$Name=="cg12981137"),]
-#type1[which(type1$Name=="cg12434587"),]
-
-#type1 <- getProbeInfo(me,c("I"))
-#type1[which(type1$Name=="cg12981137"),]
-#type1[which(type1$Name=="cg12434587"),]
-
-rm(list=ls())
-gc()
+library(dplyr)
 
 file <- "EPIC-8v2-0_A1.csv"
 
@@ -36,16 +16,28 @@ gc()
 
 manifest <- vroom(file,skip=assay.line,n_max =control.line-assay.line-2) 
 
-#manifest[which(manifest$Name=="cg12981137"),"AlleleA_ProbeSeq"]
-#manifest[which(manifest$Name=="cg12981137"),"Infinium_Design"]
-#manifest[which(manifest$Name=="cg12981137"),"IlmnID"]
-
-#manifest[which(manifest$Name=="cg12434587"),"AlleleA_ProbeSeq"]
-#manifest[which(manifest$Name=="cg12434587"),"IlmnID"]
-
+# remove mgmt dupliated probes
 manifest <- manifest[-which(manifest$IlmnID %in% c("cg12434587_BO11","cg12981137_BO11","cg12981137_TC21","cg12981137_BC21")),]
 
-manifest <- manifest[-which(duplicated(manifest$Name)),]
+# check remaining duplicates and select those in manifest$manifest_probe_match == TRUE when possible
+duplicated_probes <- manifest$Name[duplicated(manifest$Name)]
+
+remove_duplicated <- function(probe){
+  sel <- which(manifest$Name == probe)
+  if(any(manifest[sel,"Manifest_probe_match"])){ 
+    sel_ID <- manifest$IlmnID[sel[which(manifest[sel,"Manifest_probe_match"]%>%pull())]][1]
+  }else{
+    sel_ID <- manifest$IlmnID[sel][1]
+  }
+  rmv_ID <- setdiff(manifest$IlmnID[sel],sel_ID)
+  return(rmv_ID)
+}
+
+rmv_IlmnID <- unlist(sapply(duplicated_probes,remove_duplicated))
+
+manifest <- manifest[-which(manifest$IlmnID %in% rmv_IlmnID),]
+
+any(duplicated(manifest$Name))
 
 manifest$AddressA_ID <- gsub("^0*", "", manifest$AddressA_ID)
 manifest$AddressB_ID <- gsub("^0*", "", manifest$AddressB_ID)
@@ -133,3 +125,5 @@ IlluminaHumanMethylationEPICv2manifest <- IlluminaMethylationManifest(TypeI = ma
                                                               annotation = "IlluminaHumanMethylationEPICv2")
 
 use_data(IlluminaHumanMethylationEPICv2manifest, internal=TRUE, overwrite = T)
+
+
